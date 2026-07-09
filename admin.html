@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAS_agents - داشبۆردی ڕاستەقینە</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f2f5; display: flex; }
+        .sidebar { width: 260px; background-color: #1a237e; color: white; min-height: 100vh; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar h2 { text-align: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .sidebar ul { list-style: none; flex-grow: 1; }
+        .sidebar ul li { padding: 12px 15px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .sidebar ul li.active { background-color: #0d47a1; }
+        .logout-btn { background-color: #d32f2f; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .main-content { flex: 1; padding: 30px; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .stat-card h3 { font-size: 14px; color: #777; margin-bottom: 5px; }
+        .stat-card .number { font-size: 24px; font-weight: bold; color: #1a237e; }
+        .data-section { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .data-section h3 { color: #1a237e; margin-bottom: 15px; }
+        
+        /* فۆرمی زیادکردنی کڕیار */
+        .form-inline { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .form-inline input, .form-inline select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; flex: 1; min-width: 150px; }
+        .btn-add { background-color: #1a237e; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn-add:hover { background-color: #0d47a1; }
+
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #555; }
+        .no-data { text-align: center; color: #999; padding: 30px; font-style: italic; }
+        .btn-delete { background-color: #ffcdd2; color: #c62828; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-delete:hover { background-color: #ef9a9a; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div>
+            <h2>SAS_agents</h2>
+            <ul>
+                <li class="active"><i class="fas fa-chart-line"></i> سەرپەرشتی گشتی</li>
+                <li onclick="window.location.href='index.html'"><i class="fas fa-home"></i> سەردانی ماڵپەڕ</li>
+            </ul>
+        </div>
+        <button class="logout-btn" onclick="logout()">چوونە دەرەوە (Log Out)</button>
+    </div>
+
+    <div class="main-content">
+        <div class="admin-header">
+            <h2>کۆنترۆڵی ڕاستەقینەی سیستەم</h2>
+            <div>بەخێربێیت، <strong>شادمان احمدسامی</strong> 👋</div>
+        </div>
+
+        <!-- کارتەکانی ئاماری ڕاستەقینە (سەرەتا لە سفرەوە دەستپێدەکات) -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div>
+                    <h3>کۆیی کڕیارانی ڕاستەقینە</h3>
+                    <div class="number" id="totalUsers">0 کڕیار</div>
+                </div>
+                <i class="fas fa-users" style="color: #1a237e; font-size: 30px;"></i>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <h3>کۆیی داهاتی حەڵاڵ</h3>
+                    <div class="number" id="totalRevenue" style="color: #2e7d32;">0 د.ع</div>
+                </div>
+                <i class="fas fa-hand-holding-usd" style="color: #00e676; font-size: 30px;"></i>
+            </div>
+        </div>
+
+        <!-- بەشی تۆمارکردنی کڕیارێکی نوێ -->
+        <div class="data-section">
+            <h3><i class="fas fa-user-plus"></i> تۆمارکردنی کڕیارێکی نوێ (دوای ئەوەی پارەکەی نارد)</h3>
+            <div class="form-inline">
+                <input type="text" id="custName" placeholder="ناوی کڕیار">
+                <input type="text" id="custPhone" placeholder="ژمارەی مۆبایل" style="direction: ltr; text-align: right;">
+                <select id="custMethod">
+                    <option value="FastPay">FastPay</option>
+                    <option value="FIB">FIB</option>
+                </select>
+                <button class="btn-add" onclick="addUser()">تۆمارکردن و چالاککردن</button>
+            </div>
+        </div>
+
+        <!-- خشتەی کڕیارە ڕاستەقینەکان -->
+        <div class="data-section">
+            <h3><i class="fas fa-list"></i> لیستی کڕیارە چالاکەکان</h3>
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ناوی کڕیار</th>
+                        <th>ژمارەی مۆبایل</th>
+                        <th>ڕێگای پارەدان</th>
+                        <th>بڕی پارە</th>
+                        <th>کردار</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- لێرەدا کڕیارەکان بەپێی ڕاستی نیشان دەدرێن -->
+                </tbody>
+            </table>
+            <div id="noDataMessage" class="no-data">هیچ کڕیارێکی ڕاستەقینە تۆمار نەکراوە. سیستەمەکە بەتاڵە.</div>
+        </div>
+    </div>
+
+    <script>
+        if(localStorage.getItem("role") !== "admin") { window.location.href = "login.html"; }
+
+        // بارکردنی کڕیارەکان لە برۆوسەرەکەوە (ئەگەر پێشتر پاشەکەوت کرابێتن)
+        let customers = JSON.parse(localStorage.getItem("sas_customers")) || [];
+
+        function updateDashboard() {
+            const tableBody = document.getElementById("tableBody");
+            const noDataMessage = document.getElementById("noDataMessage");
+            const totalUsers = document.getElementById("totalUsers");
+            const totalRevenue = document.getElementById("totalRevenue");
+
+            tableBody.innerHTML = "";
+            let totalMoney = 0;
+
+            if (customers.length === 0) {
+                noDataMessage.style.display = "block";
+            } else {
+                noDataMessage.style.display = "none";
+                customers.forEach((user, index) => {
+                    totalMoney += 10000; // هەر کڕیارێک ١٠ هەزار دینار
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td style="direction: ltr; text-align: right;">${user.phone}</td>
+                            <td>${user.method}</td>
+                            <td style="color: #2e7d32; font-weight: bold;">10,000 د.ع</td>
+                            <td><button class="btn-delete" onclick="deleteUser(${index})"><i class="fas fa-trash"></i> سڕینەوە</button></td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // نوێکردنەوەی ژمارەکان لەسەر شاشە بەپێی واقیع
+            totalUsers.innerText = `${customers.length} کڕیار`;
+            totalRevenue.innerText = `${totalMoney.toLocaleString()} د.ع`;
+            
+            // پاشەکەوتکردن لەناو برۆوسەرەکەدا
+            localStorage.setItem("sas_customers", JSON.stringify(customers));
+        }
+
+        // فرمانی زیادکردنی کڕیارێکی نوێ
+        function addUser() {
+            const name = document.getElementById("custName").value.trim();
+            const phone = document.getElementById("custPhone").value.trim();
+            const method = document.getElementById("custMethod").value;
+
+            if (!name || !phone) {
+                alert("تکایە ناوی کڕیار و ژمارەی مۆبایلەکەی بنووسە!");
+                return;
+            }
+
+            customers.push({ name: name, phone: phone, method: method });
+            updateDashboard();
+
+            // پاککردنەوەی خانەکان
+            document.getElementById("custName").value = "";
+            document.getElementById("custPhone").value = "";
+        }
+
+        // فرمانی سڕینەوەی کڕیار (ئەگەر ماوەکەی تەواو بوو یان بەهەڵە دانرابوو)
+        function deleteUser(index) {
+            if(confirm("ئایا دڵنیایت لە سڕینەوەی ئەم کڕیارە؟")) {
+                customers.splice(index, 1);
+                updateDashboard();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("role");
+            window.location.href = "index.html";
+        }
+
+        // لە کاتی بوونەوەی لاپەڕەکەدا ئامارەکان نوێ بکەرەوە
+        updateDashboard();
+    </script>
+</body>
+</html>
