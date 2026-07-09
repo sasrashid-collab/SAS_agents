@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAS_agents - چوونەژوورەوە</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-card { background: white; padding: 40px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .login-card h2 { color: #1a237e; margin-bottom: 10px; }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; text-align: left; direction: ltr; }
+        .login-btn { background-color: #1a237e; color: white; border: none; width: 100%; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+        .error-msg { color: red; font-size: 14px; margin-top: 15px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>SAS_agents</h2>
+        <p>داشبۆردی بەڕێوەبردنی شادمان احمدسامی</p>
+        <div class="form-group">
+            <label>ناوی بەکارهێنەر</label>
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <label>پاسوۆرد</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+        <button class="login-btn" onclick="checkLogin()">چوونەژوورەوە</button>
+        <p class="error-msg" id="error">ناوی بەکارهێنەر یان پاسوۆردەکەت هەڵەیە!</p>
+    </div>
+    <script>
+        function checkLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            if (user === "shadman" && pass === "SAS2026") {
+                localStorage.setItem("role", "admin"); // ناساندنی تۆ وەک ئەدمین لە برۆوسەرەکەدا
+                window.location.href = "admin.html";
+            } else {
+                document.getElementById('error').style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
