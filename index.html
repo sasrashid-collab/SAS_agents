@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAS_agents - AI Solution</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; color: #333; transition: 0.3s; }
+        header { background-color: #1a237e; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 24px; font-weight: bold; }
+        .nav-buttons { display: flex; gap: 10px; align-items: center; }
+        
+        .lang-btn { background-color: #ffffff; color: #1a237e; border: none; padding: 8px 15px; font-weight: bold; border-radius: 20px; cursor: pointer; font-size: 14px; }
+        .download-btn { background-color: #00e676; color: #121212; border: none; padding: 10px 18px; font-size: 14px; font-weight: bold; border-radius: 25px; cursor: pointer; }
+        .admin-link { background-color: #2196f3; color: white; padding: 10px 18px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 14px; display: none; }
+        
+        .container { max-width: 1000px; margin: 40px auto; padding: 20px; text-align: center; }
+        .blessing { color: #555; font-style: italic; margin-bottom: 10px; font-size: 18px; }
+        h1 { color: #1a237e; margin-bottom: 10px; font-size: 32px; }
+        .tagline { color: #666; font-size: 18px; margin-bottom: 40px; }
+
+        /* بەشی بۆتی تاقیکاری */
+        .bot-demo-section { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 40px; text-align: right; }
+        .bot-demo-section h2 { color: #1a237e; margin-bottom: 20px; text-align: center; }
+        .bot-settings { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .bot-settings select, .bot-settings input { padding: 10px; border: 1px solid #ccc; border-radius: 6px; flex: 1; min-width: 200px; font-size: 14px; }
+        
+        .chat-box { background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; height: 200px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 15px; border-radius: 15px; max-width: 70%; font-size: 14px; line-height: 1.5; }
+        .msg.bot { background: #e8eaf6; align-self: flex-start; color: #1a237e; }
+        .msg.user { background: #1a237e; color: white; align-self: flex-end; }
+        
+        .chat-input-area { display: flex; gap: 10px; margin-top: 15px; }
+        .chat-input-area input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; }
+        .chat-input-area button { background: #1a237e; color: white; border: none; padding: 0 25px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* تۆڕی خزمەتگوزارییەکان (تەواو جێگیر کراوە بۆ ٣ دانە) */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 35px; }
+        .service-card { background: white; padding: 30px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid #1a237e; text-align: right; }
+        .service-card i { font-size: 40px; color: #1a237e; margin-bottom: 15px; display: block; text-align: center; }
+        .service-card h3 { color: #1a237e; margin-bottom: 10px; font-size: 18px; }
+        .service-card p { color: #555; font-size: 14px; line-height: 1.6; }
+
+        .payment-card { background: white; border: 2px solid #e0e0e0; border-radius: 12px; padding: 30px; margin-top: 40px; }
+        .price { font-size: 32px; color: #d32f2f; font-weight: bold; margin: 15px 0; }
+        .payment-methods { margin-top: 20px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .method { background: #fafafa; padding: 15px 25px; border-radius: 8px; border: 1px solid #ddd; min-width: 220px; }
+        
+        .whatsapp-btn { background-color: #25d366; color: white; border: none; padding: 14px 28px; font-size: 16px; font-weight: bold; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; margin-top: 25px; }
+        .owner-badge { background-color: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 8px; margin-top: 20px; font-weight: bold; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">SAS_agents</div>
+        <div class="nav-buttons">
+            <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">العربية</button>
+            <a href="admin.html" class="admin-link" id="adminLink"></a>
+            <button class="download-btn" id="installBtn"></button>
+        </div>
+    </header>
+
+    <div class="container">
+        <p class="blessing" id="txtBlessing">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+        <h1 id="txtTitle"></h1>
+        <p class="tagline" id="txtTagline"></p>
+
+        <!-- 🤖 ژووری تاقیکردنەوەی بۆتی ئامادەکراو -->
+        <div class="bot-demo-section">
+            <h2 id="txtBotTitle"></h2>
+            <p style="margin-bottom: 15px; color: #666;" id="txtBotDesc"></p>
+            
+            <div class="bot-settings">
+                <select id="botTemplate" onchange="changeBotTemplate()">
+                </select>
+                <input type="text" id="customWelcome" oninput="changeWelcomeMsg()">
+            </div>
+
+            <div class="chat-box" id="chatBox">
+                <div class="msg bot" id="botInitialMsg"></div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="userInput">
+                <button onclick="sendMessage()" id="txtSendBtn"></button>
+            </div>
+        </div>
+
+        <!-- 🛠️ گەڕانەوەی هەر سێ خزمەتگوزارییەکە بە تەواوی -->
+        <div class="services-grid">
+            <div class="service-card">
+                <i class="fas fa-robot"></i>
+                <h3 id="srv1Title"></h3>
+                <p id="srv1Desc"></p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-brain"></i>
+                <h3 id="srv2Title"></h3>
+                <p id="srv2Desc"></p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-headset"></i>
+                <h3 id="srv3Title"></h3>
+                <p id="srv3Desc"></p>
+            </div>
+        </div>
+
+        <div class="owner-badge" id="ownerWelcome"></div>
+
+        <!-- بەشی بەشداری مانگانە -->
+        <div class="payment-card" id="paymentSection">
+            <h3 id="payTitle"></h3>
+            <div class="price" id="txtPrice">١٠,٠٠٠ د.ع / مانگانە</div>
+            <p id="payDesc"></p>
+            
+            <div class="payment-methods">
+                <div class="method"><h4>FastPay</h4><p class="phone" dir="ltr">+964 750 490 9260</p></div>
+                <div class="method"><h4>FIB</h4><p class="phone" dir="ltr">+964 750 490 9260</p></div>
+            </div>
+
+            <a href="https://wa.me/9647504909260" target="_blank" class="whatsapp-btn" id="txtWaBtn"></a>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            ku: {
+                adminLink: "<i class='fas fa-user-shield'></i> جۆردی کۆنترۆڵ",
+                installBtn: "<i class='fas fa-download'></i> وەک ئەپ دایبەزێنە",
+                title: "پڕۆژەی بریکارە زیرەکەکان - SAS_agents",
+                tagline: "خاوەنی پڕۆژە: شادمان احمدسامی رشید | ئۆتۆماتیککردنی ماڵپەڕەکان بەبێ پێویستی بە کڕینی API Key",
+                botTitle: "🤖 بۆتی خۆکار جێگیرکراو (تاقیکردنەوەی خێرا)",
+                botDesc: "دەتوانیت بەپێی ویستی خۆت جۆری بۆتەکە دیاری بکەیت و گۆڕانکاری سادەی تێدا بکەیت بەبێ پێویستی بە کۆد یان مۆڵەتی دەرەکی:",
+                inputPlaceholder: "پرسیارەکەت لێرە بنووسە...",
+                welcomePlaceholder: "نامەی بەخێرهاتنی تایبەت بنووسە...",
+                send: "ناردن",
+                price: "١٠,٠٠٠ د.ع / مانگانە",
+                
+                // دەقە ڕاستەکانی هەر سێ خزمەتگوزارییەکە بە کوردی
+                srv1T: "١. وەڵامدانەوەی خۆکاری لاپەڕەکان",
+                srv1D: "دروستکردنی بۆتی زیرەک بۆ پەیجی فەیسبووک و ئینستاگرامەکەت. وەڵامی نامە و کۆمێنتی کڕیارەکانت دەداتەوە لە ١ چرکەدا بۆ ئەوەی هیچ کڕیارێک لەدەست نەدەیت.",
+                srv2T: "٢. یاریدەدەری زیرەکی فۆڕم و داتا",
+                srv2D: "بریکاری زیرەک بۆ ڕێکخستنی داتاکانی کۆمپانیا، نوسینی ڕاپۆرت، و شیکردنەوەی خێرای فایلە گەورەکانی وەک ئێکسڵ و پی-دی-ئێف بەبێ پێویستی بە کڕینی API Key.",
+                srv3T: "٣. پشتگیری کڕیاران ٢٤/٧",
+                srv3D: "خزمەتگوزاری پشتگیری کڕیاران بەبێ وەستان لە ماڵپەڕەکەتدا. کڕیار هەر پرسیارێکی هەبێت لەسەر نرخ یان ناونیشان، بریکارەکەمان ڕێنمایی دەکات.",
+                
+                ownerWelcome: "<i class='fas fa-check-circle'></i> بەخێربێیتەوە کاک شادمان! تۆ خاوەنی پڕۆژەکەیت و سیستەمەکە بۆ تۆ بەخۆڕاییە.",
+                payT: "مۆڵەتی بەکارهێنانی SAS_agents",
+                payD: "بۆ چالاککردنی خزمەتگوزاری مۆڵەتەکە بۆ ماڵپەڕەکەت، بڕی پارەکە بنێرە و لە واتسئەپەوە پەیوەندیمان پێوە بکە:",
+                wa: "ناردنی پسوڵە و چالاککردن",
+                langBtn: "العربية",
+                templates: [
+                    { value: "sales", text: "بۆتی فرۆشتن و وەڵامدانەوەی کڕیاران (Sales Bot)" },
+                    { value: "realestate", text: "بۆتی ڕاوێژکاری خانوبەرە (Real Estate Bot)" },
+                    { value: "support", text: "بۆتی پشتگیری و چارەسەری کێشەکان (Support Bot)" }
+                ],
+                botResponses: {
+                    sales: { welcome: "سڵاو! من بۆتی فرۆشتنی تۆم. نرخەکانمان زۆر گونجاون. چ جۆرە کاڵایەکت دەوێت؟", reply: "سوپاس بۆ پرسیارەکەت. ئەم بەرهەمە گەرەنتی ڕەسەنی لەگەڵە!" },
+                    realestate: { welcome: "سڵاو لە بەشی ڕاوێژکاری خانوبەرە. ئایا دەتەوێت خانوو بکڕیت یان بەکرێ بگریت؟", reply: "ئێمە چەندین بژاردەی نایابمان هەیە لە باشترین شوێنەکانی شار." },
+                    support: { welcome: "سڵاو، من یاریدەدەری تەکنیکیم. کێشەکەت چییە تا یارمەتیت بدەم؟", reply: "تکایە دڵنیابەوە لە هێڵی ئینتەرنێتەکەت یان لاپەڕەکە نوێ بکەرەوە." }
+                }
+            },
+            ar: {
+                adminLink: "<i class='fas fa-user-shield'></i> لوحة التحكم",
+                installBtn: "<i class='fas fa-download'></i> تحميل كتطبيق",
+                title: "مشروع الوكلاء الأذكياء - SAS_agents",
+                tagline: "صاحب المشروع: شادمان احمدسامی رشید | أتمتة المواقع بدون الحاجة لشراء مفتاح API Key",
+                botTitle: "🤖 البوت المدمج التلقائي (تجربة سريعة)",
+                botDesc: "يمكنك تحديد نوع البوت وإجراء تعديلات بسيطة حسب حاجتك بدون الحاجة لأكواد أو اشتراكات خارجية:",
+                inputPlaceholder: "اكتب سؤالك هنا...",
+                welcomePlaceholder: "اكتب رسالة ترحيبية مخصصة...",
+                send: "إرسال",
+                price: "١٠,٠٠٠ د.ع / شهرياً",
+                
+                // دەقە ڕاستەکانی هەر سێ خزمەتگوزارییەکە بە عەرەبی
+                srv1T: "١. الرد التلقائي على الصفحات",
+                srv1D: "إنشاء بوت ذكي لصفحات الفيسبوك والانستغرام الخاصة بك. يجيب على الرسائل والتعليقات في ثانية واحدة لكي لا تخسر أي زبون.",
+                srv2T: "٢. المساعد الذكي للاستمارات والبيانات",
+                srv2D: "وكيل ذكي لتنظيم بيانات الشركة، كتابة التقارير، والتحليل السريع للملفات الكبيرة مثل Excel و PDF دون الحاجة لشراء مفتاح API.",
+                srv3T: "٣. دعم العملاء ٢٤/٧",
+                srv3D: "خدمة دعم العملاء دون توقف على موقعك الإلكتروني. إذا كان لدى العميل أي سؤال حول الأسعار أو العناوين، يقوم بوتنا بتوجيهه.",
+                
+                ownerWelcome: "<i class='fas fa-check-circle'></i> مرحباً بك كاك شادمان! أنت صاحب المشروع والنظام متاح لك مجاناً دائماً.",
+                payT: "رخصة استخدام نظام SAS_agents",
+                payD: "لتفعيل خدمة البوت الذكي لموقعك، يرجى إرسال قيمة الاشتراك والتواصل معنا عبر الواتساب:",
+                wa: "إرسال الوصل وتفعيل الخدمة",
+                langBtn: "کوردی",
+                templates: [
+                    { value: "sales", text: "بوت المبيعات والرد على الزبائن (Sales Bot)" },
+                    { value: "realestate", text: "بوت المستشار العقاري (Real Estate Bot)" },
+                    { value: "support", text: "بوت الدعم الفني وحل المشاكل (Support Bot)" }
+                ],
+                botResponses: {
+                    sales: { welcome: "مرحباً! أنا بوت المبيعات الخاص بك. أسعارنا مناسبة جداً. ما الذي تبحث عنه؟", reply: "شكراً لاستفسارك. هذا المنتج يأتي مع ضمان أصلي وبأفضل سعر!" },
+                    realestate: { welcome: "مرحباً بك في قسم العقارات. هل تبحث عن شراء أو استئجار منزل أو شقة؟", reply: "لدينا خيارات ممتازة في أفضل مناطق المدينة وبتسهيلات رائعة." },
+                    support: { welcome: "مرحباً، أنا المساعد الفني. ما هي المشكلة التي تواجهها لمساعدتك؟", reply: "يرجى التأكد من اتصال الإنترنت أو تحديث الصفحة، إذا استمرت المشكلة نحن هنا للمساعدة." }
+                }
+            }
+        };
+
+        let currentLang = "ku";
+
+        function updateUI() {
+            const t = translations[currentLang];
+            
+            document.getElementById("adminLink").innerHTML = t.adminLink;
+            document.getElementById("installBtn").innerHTML = t.installBtn;
+            document.getElementById("txtTitle").innerText = t.title;
+            document.getElementById("txtTagline").innerText = t.tagline;
+            document.getElementById("txtBotTitle").innerText = t.botTitle;
+            document.getElementById("txtBotDesc").innerText = t.botDesc;
+            document.getElementById("txtSendBtn").innerText = t.send;
+            document.getElementById("txtPrice").innerText = t.price;
+            
+            // جێگیرکردنی هەر سێ خزمەتگوزارییەکە لە لاپەڕەکەدا
+            document.getElementById("srv1Title").innerText = t.srv1T;
+            document.getElementById("srv1Desc").innerText = t.srv1D;
+            document.getElementById("srv2Title").innerText = t.srv2T;
+            document.getElementById("srv2Desc").innerText = t.srv2D;
+            document.getElementById("srv3Title").innerText = t.srv3T;
+            document.getElementById("srv3Desc").innerText = t.srv3D;
+            
+            document.getElementById("ownerWelcome").innerHTML = t.ownerWelcome;
+            document.getElementById("payTitle").innerText = t.payT;
+            document.getElementById("payDesc").innerText = t.payD;
+            document.getElementById("txtWaBtn").innerHTML = `<i class="fab fa-whatsapp" style="font-size: 22px;"></i> ` + t.wa;
+            document.getElementById("langBtn").innerText = t.langBtn;
+            
+            document.getElementById("userInput").placeholder = t.inputPlaceholder;
+            document.getElementById("customWelcome").placeholder = t.welcomePlaceholder;
+
+            const select = document.getElementById("botTemplate");
+            const currentVal = select.value || "sales";
+            select.innerHTML = "";
+            t.templates.forEach(opt => {
+                const isSelected = opt.value === currentVal ? "selected" : "";
+                select.innerHTML += `<option value="${opt.value}" ${isSelected}>${opt.text}</option>`;
+            });
+
+            document.getElementById("botInitialMsg").innerText = t.botResponses[currentVal].welcome;
+        }
+
+        function changeBotTemplate() {
+            const template = document.getElementById("botTemplate").value;
+            const t = translations[currentLang];
+            document.getElementById("botInitialMsg").innerText = t.botResponses[template].welcome;
+            document.getElementById("customWelcome").value = t.botResponses[template].welcome;
+        }
+
+        function changeWelcomeMsg() {
+            const txt = document.getElementById("customWelcome").value;
+            if(txt.trim() !== "") { document.getElementById("botInitialMsg").innerText = txt; }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById("userInput");
+            const chatBox = document.getElementById("chatBox");
+            const template = document.getElementById("botTemplate").value;
+            const t = translations[currentLang];
+
+            if (input.value.trim() === "") return;
+
+            chatBox.innerHTML += `<div class="msg user">${input.value}</div>`;
+            
+            setTimeout(() => {
+                chatBox.innerHTML += `<div class="msg bot">${t.botResponses[template].reply}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 500);
+
+            input.value = "";
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === "ku" ? "ar" : "ku";
+            document.documentElement.lang = currentLang;
+            updateUI();
+        }
+
+        updateUI();
+
+        if(localStorage.getItem("role") === "admin") {
+            document.getElementById("adminLink").style.display = "block";
+            document.getElementById("ownerWelcome").style.display = "block";
+            document.getElementById("paymentSection").style.display = "none";
+        }
+    </script>
+</body>
+</html>
